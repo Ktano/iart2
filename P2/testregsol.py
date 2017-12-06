@@ -28,5 +28,6 @@ for ii,test in enumerate(["regress.npy", "regress2.npy"]):
     plt.plot(X,Y,'k+',label='datatrain')
     plt.plot(Xp,Ypred,'m',label='linregres1')
     plt.legend( loc = 1 )
+    plt.show()
 
 
