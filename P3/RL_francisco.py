@@ -7,39 +7,41 @@ from sklearn.externals import joblib
 
 class finiteMDP:
 
-    def Q2pol(self, Q, eta=5):
-        return np.exp(eta*Q)/np.dot(np.exp(eta*Q),np.array([[1,1],[1,1]]))
-    
-    def traces2Q(self, trace):
-        
-        self.Q = np.zeros((self.nS,self.nA))
-        nQ = np.zeros((self.nS,self.nA))
-        ii = 0
-        while True:            
-            for tt in trace:
-                #[x, a, y, r]
-                nQ[int(tt[0]),int(tt[1])] = nQ[int(tt[0]),int(tt[1])] + 0.01 * (tt[3] + self.gamma * max(nQ[int(tt[2]),:]) - nQ[int(tt[0]),int(tt[1])])
-            ii = ii +1  
-            err = np.linalg.norm(self.Q-nQ)
-            self.Q = np.copy(nQ)
-            if err<1e-2:
-                break 
-        
     def __init__(self, nS, nA, gamma, P=[], R=[], absorv=[]):
         self.nS = nS
         self.nA = nA
         self.gamma = gamma
-        if len(P)==0:
-            P = np.zeros((nS,nA,nS))
-        self.P = P
-        if len(R)==0:
-            R = np.zeros((nS,nA))
-        self.R = R
-        self.Q = np.zeros((nS,nA))
-        self.V = np.zeros((nS))
-        if len(absorv)==0:
-            absorv = np.zeros((nS))
-        self.absorv = absorv
+        self.zeros_dim3 = np.zeros((self.nS, self.nA, self.nS))
+        self.P = P if len(P) else self.zeros_dim3.copy() #state transition probability matrix
+        self.R = R if len(R) else self.zeros_dim3[:,:,0] #Rewards for every state,action pair
+        self.Q = self.zeros_dim3[:,:,0]
+        self.V = self.zeros_dim3[:,0,0]
+        self.absorv = absorv if len(absorv) else self.zeros_dim3[:,0,0]
+        
+    def Q2pol(self, Q, eta=5):
+        e = np.exp(eta*Q)
+        ones = np.ones((2, 2))
+        return e / e.dot(ones)
+    
+    def traces2Q(self, trace, alpha = 0.01):
+        print('@traces2Q')
+        self.Q = self.zeros_dim3[:,:,0]
+        nQ = self.Q.copy()
+        gamma = self.gamma
+        
+        while True:            
+            for tt in trace:
+                s0, a, s1, _ = map(int, tt)
+                r = tt[3] #reward
+                #[x, a, y, r]
+
+                nQ[s0,a] = nQ[s0,a] + alpha * (r + gamma * nQ[s1].max() - nQ[s0,a])
+
+            err = np.linalg.norm(self.Q-nQ)
+            self.Q = nQ.copy()
+            print("err", err)         
+            if err<1e-2:
+                break 
         
     def T(self, x, a):
         r = self.R[x,a]
@@ -53,20 +55,21 @@ class finiteMDP:
         return y,r
     
     def VI(self):
-        nQ = np.zeros((self.nS,self.nA))
+
+        Q = np.zeros((self.nS,self.nA))
+
         while True:
-            self.V = np.max(self.Q,axis=1) 
-            for a in range(0,self.nA):
-                nQ[:,a] = self.R[:,a] + self.gamma * np.dot(self.P[:,a,:],self.V)
-            err = np.linalg.norm(self.Q-nQ)
-            self.Q = np.copy(nQ)
+            self.V = self.Q.max(axis=1) 
+            for a in range(0, self.nA):
+                Q[:,a] = self.R[:,a] + self.gamma * self.P[:,a,:].dot(self.V)
+            err = np.linalg.norm(self.Q-Q)
+            self.Q = Q.copy()
             if err<1e-5:
                 break
             
-        #update policy
-        self.V = np.max(self.Q, axis=1) 
-        #correct for 2 equal actions
-        self.Pol = np.argmax(self.Q, axis=1)
+        self.V = self.Q.max(axis=1)         #update policy
+
+        self.Pol = self.Q.argmax(axis=1)        #correct for 2 equal actions
             
         return self.Q
        
@@ -80,13 +83,13 @@ class finiteMDP:
         if depth==0:
             return []
                         
-        for aa in range(0,self.nA):
-            if pol[x0,aa]==False:
+        for a in range(0,self.nA):
+            if pol[x0,a]==False:
                 continue
                 
             for ns in range(0,self.nS):
-                if self.P[x0,aa,ns]>0:
-                    p = self.P[x0,aa,ns]
+                if self.P[x0,a,ns]>0:
+                    p = self.P[x0,a,ns]
                     tree[2].append([ns,tree[1]*p,[]])
                     self.createTree( ns, pol, tree[2][-1], depth-1 )
 
@@ -118,20 +121,18 @@ class finiteMDP:
         
         return sum(np.log(e)*e)
         
-            
-        
     
-    def runPolicy(self, n, x0, pol=[]):
+    def runPolicy(self, iterations, x0, pol=[]):
         
-        traj = np.zeros((n,4))
+        traj = np.zeros((iterations, 4))
         x = x0
         J = 0
-        for ii in range(0,n):
+        for i in range(0, iterations):
             a = np.nonzero(np.random.multinomial( 1, pol[x,:]))[0][0]
             r = self.R[x,a]
             y = np.nonzero(np.random.multinomial( 1, self.P[x,a,:]))[0][0]
-            traj[ii,:] = np.array([x, a, y, r])
-            J = J + r * self.gamma**ii
+            traj[i,:] = np.array([x, a, y, r])
+            J = J + r * self.gamma**i
             if self.absorv[x]:
                 break
             #update state
@@ -157,9 +158,9 @@ class finiteMDP:
 def interprRL( fmdp, query=[] ):
     
     start = timeit.timeit()
-    #fmdp2 = finiteMDP( fmdp.nS , fmdp.nA, 0.99, fmdp.P, fmdp.R)
+    fmdp2 = finiteMDP( fmdp.nS , fmdp.nA, 0.99, fmdp.P, fmdp.R)
     Q = fmdp.VI()
-    #Q2 = fmdp2.VI()
+    Q2 = fmdp2.VI()
     pol = fmdp.Q2pol(Q, eta=5)
     poll = pol>=0.5
     
@@ -181,8 +182,8 @@ def interprRL( fmdp, query=[] ):
     Jd,Jnd = fmdp.rollouts(10,b,pol)
     print("discounted " + str(Jd) + " non discounted " + str(Jnd))
     print(Q[b,:])
-    #print(Q2[3,:])
-    #print(timeit.timeit()-start)
+    print(Q2[3,:])
+    print(timeit.timeit()-start)
 
     print("Because the entropy would be: ")    
     poll[b,:]=[False,True]
@@ -194,45 +195,53 @@ def interprRL( fmdp, query=[] ):
     t = fmdp.createTree( b, poll )
     e = fmdp.computeTreeEntropy( t )
     print(e)  
-    #print(timeit.timeit()-start)
+    print(timeit.timeit()-start)
 #    
 ### Env 1
-#Pl = np.zeros((7,2,7))
-#Pl[0,0,1]=1
-#Pl[1,0,2]=1
-#Pl[2,0,3]=1
-#Pl[3,0,4]=1
-#Pl[4,0,5]=1
-#Pl[5,0,6]=0.9
-#Pl[5,0,5]=0.1
-#Pl[6,0,6]=1
-#  
-#Pl[0,1,0]=1
-#Pl[1,1,1]=0
-#Pl[1,1,0]=1
-#Pl[2,1,1]=1
-#Pl[3,1,2]=1
-#Pl[4,1,3]=1
-#Pl[5,1,4]=1    
-#Pl[6,1,5]=1
-#    
-#Rl = np.zeros((7,2))
-#Rl[[0,6],:]=1
-#absorv = np.zeros((7,1))
-##absorv[[0,6]]=1
-# 
-#fmdp = finiteMDP(7,2,0.9,Pl,Rl,absorv)
-##interprRL( fmdp, [3] )
-#pol = fmdp.VI()
-#pol=pol*0+0.5
-#J,traj = fmdp.runPolicy(500,1,pol)
-#print(traj)
-#
-#joblib.dump(fmdp, 'fmdp.pkl') 
-#
-#print(fmdp.Q)
-#fmdp.traces2Q(traj)
-#print(fmdp.Q)
-#
-#joblib.dump(traj, 'traj.pkl') 
-#
+
+def env1():
+	Pl = np.zeros((7,2,7))
+	Pl[0,0,1]=1
+	Pl[1,0,2]=1
+	Pl[2,0,3]=1
+	Pl[3,0,4]=1
+	Pl[4,0,5]=1
+	Pl[5,0,6]=0.9
+	Pl[5,0,5]=0.1
+	Pl[6,0,6]=1
+	  
+	Pl[0,1,0]=1
+	Pl[1,1,1]=0
+	Pl[1,1,0]=1
+	Pl[2,1,1]=1
+	Pl[3,1,2]=1
+	Pl[4,1,3]=1
+	Pl[5,1,4]=1    
+	Pl[6,1,5]=1
+	    
+	Rl = np.zeros((7,2))
+	Rl[[0,6],:]=1
+	absorv = np.zeros((7,1))
+	absorv[[0,6]]=1
+	 
+	fmdp = finiteMDP(7,2,0.9,Pl,Rl,absorv)
+	
+	interprRL( fmdp, [3] )
+	
+	pol = fmdp.VI()
+	pol = pol * 0 + 0.5
+	
+	J,traj = fmdp.runPolicy(500,1,pol)
+	
+	print(traj)
+	
+	joblib.dump(fmdp, 'fmdp.pkl') 
+	
+	print(fmdp.Q)
+	
+	fmdp.traces2Q(traj)
+	
+	print(fmdp.Q)
+	
+	joblib.dump(traj, 'traj.pkl') 
+

@@ -1,0 +1,93 @@
+
+sets related to chr_first
+true {'t', 'â', 'z', 'g', 'j', 'ô', 'ú', 'q', 'e', 'i', 'm', 'r', 'n', 'b', 'f', 'c', 'h', 'á', 'í', 'u', 'o', 'd', 'p', 'ó', 'l', 's', 'v'}
+false {'t', 'â', 'g', 'j', 'a', 'q', 'e', 'i', 'm', 'r', 'n', 'b', 'f', 'c', 'k', 'h', 'á', 'í', 'é', 'u', 'o', 'd', 'p', 'ó', 'l', 's', 'ê', 'v'}
+intersection {'t', 'â', 'g', 'j', 'q', 'e', 'i', 'm', 'r', 'n', 'b', 'f', 'c', 'h', 'á', 'í', 'u', 'o', 'd', 'p', 'ó', 'l', 's', 'v'}
+union {'t', 'â', 'z', 'g', 'j', 'ô', 'a', 'ú', 'q', 'e', 'i', 'm', 'r', 'n', 'b', 'f', 'c', 'k', 'h', 'á', 'í', 'é', 'u', 'o', 'd', 'p', 'ó', 'l', 's', 'ê', 'v'}
+true_minus_false {'ô', 'ú', 'z'}
+false_minus_true {'a', 'k', 'ê', 'é'}
+symmetric_difference {'z', 'k', 'é', 'ô', 'a', 'ú', 'ê'}
+true_issubset False
+true_issuperset False
+
+set related to true
+set {'t', 'â', 'z', 'g', 'j', 'ô', 'ú', 'q', 'e', 'i', 'm', 'r', 'n', 'b', 'f', 'c', 'h', 'á', 'í', 'u', 'o', 'd', 'p', 'ó', 'l', 's', 'v'}
+length 27
+accentuated {'â', 'ó', 'á', 'í', 'ô', 'ú'}
+ascii {'t', 'z', 'g', 'j', 'q', 'e', 'i', 'm', 'r', 'n', 'b', 'f', 'c', 'h', 'u', 'o', 'd', 'p', 'l', 's', 'v'}
+ascii_all False
+ascii_p 0.7777777777777778
+digits set()
+
+set related to false
+set {'t', 'â', 'g', 'j', 'a', 'q', 'e', 'i', 'm', 'r', 'n', 'b', 'f', 'c', 'k', 'h', 'á', 'í', 'é', 'u', 'o', 'd', 'p', 'ó', 'l', 's', 'ê', 'v'}
+length 28
+accentuated {'â', 'ó', 'á', 'í', 'é', 'ê'}
+ascii {'t', 'g', 'j', 'a', 'q', 'e', 'i', 'm', 'r', 'n', 'b', 'f', 'c', 'k', 'h', 'u', 'o', 'd', 'p', 'l', 's', 'v'}
+ascii_all False
+ascii_p 0.7857142857142857
+digits set()
+
+
+
+sets related to chr_last
+true {'o', 'm', 'e', 'ó', 'r', 'n', 'l', 'á', 'é', 's', 'u', 'ê'}
+false {'o', 'z', 'k', 'i', 'm', 'e', 'ã', 'ú', 'r', '7', 'l', 'í', 'á', 'n', 'é', 's', 'x', 'a', 'u', 'b'}
+intersection {'o', 'm', 'e', 'r', 'n', 'l', 'á', 'é', 's', 'u'}
+union {'z', '7', 'x', 'a', 'ú', 'm', 'e', 'i', 'ã', 'r', 'n', 'b', 'k', 'á', 'í', 'é', 'u', 'o', 'ó', 'l', 's', 'ê'}
+true_minus_false {'ê', 'ó'}
+false_minus_true {'z', 'k', 'i', 'ã', '7', 'b', 'í', 'x', 'a', 'ú'}
+symmetric_difference {'z', 'k', '7', 'í', 'x', 'a', 'ú', 'i', 'ó', 'ã', 'b', 'ê'}
+true_issubset False
+true_issuperset False
+
+set related to true
+set {'o', 'm', 'e', 'ó', 'r', 'n', 'l', 'á', 'é', 's', 'u', 'ê'}
+length 12
+accentuated {'á', 'ê', 'ó', 'é'}
+ascii {'o', 'm', 'e', 'r', 'n', 'l', 's', 'u'}
+ascii_all False
+ascii_p 0.6666666666666666
+digits set()
+
+set related to false
+set {'o', 'z', 'k', 'i', 'm', 'e', 'ã', 'ú', 'r', '7', 'l', 'í', 'á', 'n', 'é', 's', 'x', 'a', 'u', 'b'}
+length 20
+accentuated {'ã', '7', 'á', 'í', 'é', 'ú'}
+ascii {'o', 'z', 'k', 'm', 'i', 'e', 'r', '7', 'l', 'n', 'x', 'b', 's', 'a', 'u'}
+ascii_all False
+ascii_p 0.75
+digits {'7'}
+
+
+
+sets related to chr_all
+true {'t', 'â', 'z', 'g', 'x', 'j', 'ô', 'ú', 'q', 'i', 'e', 'ã', 'm', 'r', 'n', 'b', 'f', 'c', 'h', 'á', 'í', 'é', 'u', 'o', 'd', 'p', 'ó', 'l', 's', 'ê', 'v'}
+false {'t', 'â', 'z', 'g', '7', 'x', 'j', 'ô', 'a', 'ú', 'q', 'e', 'ã', 'i', 'm', 'r', 'n', 'b', 'f', 'c', 'k', 'h', 'á', 'í', 'é', 'u', 'o', 'ç', 'd', 'p', 'ó', 'l', '4', 's', 'ê', 'v'}
+intersection {'t', 'â', 'z', 'g', 'x', 'j', 'ô', 'ú', 'q', 'i', 'e', 'ã', 'm', 'r', 'n', 'b', 'f', 'c', 'h', 'á', 'í', 'é', 'u', 'o', 'd', 'p', 'ó', 'l', 's', 'ê', 'v'}
+union {'z', '7', 'x', 'a', 'q', 'm', 'r', 'n', 'b', 'f', 'c', 'k', 'í', 'u', 'o', 'ó', '4', 's', 'ê', 't', 'â', 'g', 'j', 'ô', 'ú', 'i', 'e', 'ã', 'h', 'á', 'é', 'ç', 'd', 'p', 'l', 'v'}
+true_minus_false set()
+false_minus_true {'ç', 'k', '7', '4', 'a'}
+symmetric_difference {'7', 'a', 'k', 'ç', '4'}
+true_issubset True
+true_issuperset False
+
+set related to true
+set {'t', 'â', 'z', 'g', 'x', 'j', 'ô', 'ú', 'q', 'i', 'e', 'ã', 'm', 'r', 'n', 'b', 'f', 'c', 'h', 'á', 'í', 'é', 'u', 'o', 'd', 'p', 'ó', 'l', 's', 'ê', 'v'}
+length 31
+accentuated {'â', 'ã', 'ó', 'á', 'í', 'é', 'ô', 'ú', 'ê'}
+ascii {'t', 'z', 'g', 'x', 'j', 'q', 'i', 'e', 'm', 'r', 'n', 'b', 'f', 'c', 'h', 'u', 'o', 'd', 'p', 'l', 's', 'v'}
+ascii_all False
+ascii_p 0.7096774193548387
+digits set()
+
+set related to false
+set {'t', 'â', 'z', 'g', '7', 'x', 'j', 'ô', 'a', 'ú', 'q', 'e', 'ã', 'i', 'm', 'r', 'n', 'b', 'f', 'c', 'k', 'h', 'á', 'í', 'é', 'u', 'o', 'ç', 'd', 'p', 'ó', 'l', '4', 's', 'ê', 'v'}
+length 36
+accentuated {'ç', 'â', 'ã', 'ó', '7', 'á', 'í', '4', 'é', 'ô', 'ú', 'ê'}
+ascii {'t', 'z', 'g', '7', 'x', 'j', 'a', 'q', 'e', 'i', 'm', 'r', 'n', 'b', 'f', 'c', 'k', 'h', 'u', 'o', 'd', 'p', 'l', '4', 's', 'v'}
+ascii_all False
+ascii_p 0.7222222222222222
+digits {'7', '4'}
+
+
