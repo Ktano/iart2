@@ -8,7 +8,7 @@ import timeit
 
 from sklearn.model_selection import cross_val_score
 
-#
+
 from sklearn.naive_bayes import MultinomialNB
 
 import pandas as pd
@@ -67,8 +67,11 @@ def features(X):
 
 def mytraining(f,Y):
 
-    #clf = MultinomialNB()
-    clf=tree.DecisionTreeClassifier()
+#    clf = MultinomialNB()
+#    clf= linear_model.SGDClassifier(max_iter=5, tol=None)
+#    clf= linear_model.LogisticRegression()
+
+    clf= tree.DecisionTreeClassifier()
 
     clf.fit(f, Y)
    
